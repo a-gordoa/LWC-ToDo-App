@@ -1,0 +1,126 @@
+<template>
+
+    <!-- Edit/Create New ToDoItem Menu -->
+        <div class="slds-box slds-p-top_small" style="background-color: white;">
+            <lightning-record-edit-form object-api-name="To_Do_Item__c" id="a01Dn000008hSkgIAE" >
+                <lightning-input-field field-name="Subject__c"  onchange={handleAccountSelection} required></lightning-input-field>
+                <lightning-input-field field-name="Due_Date__c"  onchange={handleAccountSelection} required></lightning-input-field>
+                <lightning-input-field field-name="Status__c"  onchange={handleAccountSelection} required></lightning-input-field>
+                <lightning-input-field field-name="Priority__c"  onchange={handleAccountSelection} required></lightning-input-field>
+                <lightning-input-field field-name="Account__c"  onchange={handleAccountSelection} required></lightning-input-field>
+                <lightning-input-field field-name="Notes__c"  onchange={handleAccountSelection} required></lightning-input-field>
+            </lightning-record-edit-form>
+        </div>
+    <!--  -->
+     
+
+    <!-- Single To Do Card  -->
+    <div draggable="true" ondragstart={drag}>
+        <lightning-card title={testData.Subject__c} class="">
+
+            <button type="button" >Edit Task</button>
+    
+            
+            <div class="slds-var-p-horizontal_small " style="width:450px; height:150px; border-style:solid;">
+                
+                <div class="slds-media">
+                    <div class="slds-media__figure slds-var-m-top_small">
+                        <lightning-icon icon-name="action:new_note" alternative-text="New note" title="New note"></lightning-icon>
+                    </div>
+                    <div class="slds-grid">
+                        <div class="slds-size_1-of-2 slds-var-m-around_medium">
+                            <p class="slds-var-m-bottom_xx-small">{testData.Account__c}</p>
+                            <p class="slds-var-m-bottom_xx-small">Priority: {testData.Priority__c}</p>
+                        </div>
+                        <div class="slds-size_1-of-2 slds-var-m-around_medium">
+                            <p class="slds-var-m-bottom_xx-small">{testData.Status__c}</p>
+                            <p> Due: <lightning-formatted-date-time value={testData.Due_Date__c}></lightning-formatted-date-time> </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <p>Notes:</p>
+                    <p class="slds-var-m-bottom_medium">{testData.Notes__c}</p>
+                </div>
+            </div>
+    
+        </lightning-card> 
+
+    </div>
+    
+
+
+
+
+    <!-- <div class="slds-form" role="list">
+        <div class="slds-form__row">
+            <div class="slds-form__item" role="listitem">
+                <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_stacked slds-hint-parent">
+                    <span class="slds-form-element__label">
+                        <abbr class="slds-required" title="required">* </abbr>Assigned To</span>
+                        <div class="slds-form-element__control">
+                            <div class="slds-form-element__static">
+                                <span class="slds-avatar slds-avatar_x-small slds-avatar_circle slds-m-right_xx-small">
+                                    <lightning-avatar src="https://www.lightningdesignsystem.com/assets/images/avatar1.jpg"></lightning-avatar>
+                                </span>
+                                <a href="#">Jack Rogers</a>
+                            </div>
+                            <button class="slds-button slds-button_icon" title="Edit: Assigned To">
+                                <svg class="slds-button__icon slds-button__icon_hint" aria-hidden="true">
+                                    <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#edit"></use>
+                                </svg>
+                                <span class="slds-assistive-text">Edit: Assigned To</span>
+                            </button>
+                        </div>
+                </div>
+
+            </div>
+        </div>
+    </div> -->
+	
+
+<!-- 
+<div class="slds-form" role="list">
+    <div class="slds-form__row">
+        <div class="slds-form__item" role="listitem">
+            <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_stacked slds-hint-parent">
+                <span class="slds-form-element__label">
+                <abbr class="slds-required" title="required">* </abbr>Assigned To</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static">
+                        <span class="slds-avatar slds-avatar_x-small slds-avatar_circle slds-m-right_xx-small">
+                        <img alt="Jack Rogers" src="/assets/images/avatar1.jpg" title="Jack Rogers" />
+                        </span>
+                        <a href="#">Jack Rogers</a>
+                    </div>
+                    <button class="slds-button slds-button_icon" title="Edit: Assigned To">
+                        <svg class="slds-button__icon slds-button__icon_hint" aria-hidden="true">
+                            <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#edit"></use>
+                        </svg>
+                        <span class="slds-assistive-text">Edit: Assigned To</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="slds-form__item" role="listitem">
+            <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_stacked slds-hint-parent">
+                <span class="slds-form-element__label">Team Name</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static">
+                        <a href="#">Salesforce Lightning Design System</a>
+                    </div>
+                    <button class="slds-button slds-button_icon" title="Edit: Team Name">
+                        <svg class="slds-button__icon slds-button__icon_hint" aria-hidden="true">
+                            <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#edit"></use>
+                        </svg>
+                        <span class="slds-assistive-text">Edit: Team Name</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div> 
+</div>
+-->
+		
+</template>
