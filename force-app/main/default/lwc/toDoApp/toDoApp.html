@@ -1,3 +1,44 @@
 <template>
+
+    <lightning-card>
+        <div data-id="Not Started" title="Not Started" ondrop={handleDropNotStarted} class="target" style="border-style:soid;" >
+            <H3>Not Started </H3>
+            <template for:each={notStartedList} for:item="iter">
+                <div key={iter.Id} >
+                    <c-to-do-item-card onstartdrag={handleStartDrag} to-do-item={iter}></c-to-do-item-card>
+                </div>
+            </template>
+
+        </div>
+    </lightning-card>
+    
+
+    <lightning-card>
+        {newStatusFromDrop}
+        {toDoItemsFromApex}
+        <div data-id="In Progress" title="In Progress" ondrop={handleDropInProgress} class="target" style="border-style:soid; ">
+            <H3>In Progress </H3>
+            <template for:each={inProgressList} for:item="iter">
+                <div key={iter.Id} >
+                    <c-to-do-item-card onstartdrag={handleStartDrag} to-do-item={iter}></c-to-do-item-card>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+
+
+    <lightning-card>
+        <div data-id="Completed" title="Completed" ondrop={handleDropCompleted} class="target" style="border-style:soid;">
+            <H3>Completed </H3>
+        
+            <template for:each={completedList} for:item="iter">
+                <div key={iter.Id} >
+                    <c-to-do-item-card onstartdrag={handleStartDrag} to-do-item={iter}></c-to-do-item-card>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+
+    
     
 </template>

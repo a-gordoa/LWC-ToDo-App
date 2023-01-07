@@ -1,53 +1,116 @@
 <template>
 
-    <!-- Edit/Create New ToDoItem Menu -->
+    <lightning-card>
+    <!--  -->
+    <lightning-input type="toggle" label="Create Task Menu" checked onchange={handleToggle}> </lightning-input>
+
+        <!-- Edit/Create New ToDoItem Menu -->
+    <template if:true={createToDoItemToggle}>
         <div class="slds-box slds-p-top_small" style="background-color: white;">
             <lightning-record-edit-form object-api-name="To_Do_Item__c" id="a01Dn000008hSkgIAE" >
                 <lightning-input-field field-name="Subject__c"  onchange={handleAccountSelection} required></lightning-input-field>
                 <lightning-input-field field-name="Due_Date__c"  onchange={handleAccountSelection} required></lightning-input-field>
-                <lightning-input-field field-name="Status__c"  onchange={handleAccountSelection} required></lightning-input-field>
-                <lightning-input-field field-name="Priority__c"  onchange={handleAccountSelection} required></lightning-input-field>
-                <lightning-input-field field-name="Account__c"  onchange={handleAccountSelection} required></lightning-input-field>
-                <lightning-input-field field-name="Notes__c"  onchange={handleAccountSelection} required></lightning-input-field>
+                <lightning-input-field field-name="Status__c"  onchange={handleAccountSelection} ></lightning-input-field>
+                <lightning-input-field field-name="Priority__c"  onchange={handleAccountSelection} ></lightning-input-field>
+                <lightning-input-field field-name="Account__c"  onchange={handleAccountSelection} ></lightning-input-field>
+                <lightning-input-field field-name="Notes__c"  onchange={handleAccountSelection} ></lightning-input-field>
             </lightning-record-edit-form>
         </div>
-    <!--  -->
-     
+    </template>
+    </lightning-card> 
+    <lightning-card>
+        <lightning-button label="Get Tasks" name="getTasks" onclick={handleGetTasks}></lightning-button>
+    </lightning-card>  
 
-    <!-- Single To Do Card  -->
-    <div draggable="true" ondragstart={drag}>
-        <lightning-card title={testData.Subject__c} class="">
+    <div style="background-color: #f2f2f2">
+        <!-- Task Iter -->
+        <template for:each={toDoItemList} for:item="toDoItem" >    
+            <div key={toDoItem.Id} draggable="true" ondragstart={drag} class="slds-var-m-around_medium"> <!-- style="width:450px; height:150px;" -->
+                <lightning-card title={toDoItem.Subject__c} class="">
+                    <button type="button" >Edit Task</button>
 
-            <button type="button" >Edit Task</button>
-    
-            
-            <div class="slds-var-p-horizontal_small " style="width:450px; height:150px; border-style:solid;">
-                
-                <div class="slds-media">
-                    <div class="slds-media__figure slds-var-m-top_small">
-                        <lightning-icon icon-name="action:new_note" alternative-text="New note" title="New note"></lightning-icon>
-                    </div>
-                    <div class="slds-grid">
-                        <div class="slds-size_1-of-2 slds-var-m-around_medium">
-                            <p class="slds-var-m-bottom_xx-small">{testData.Account__c}</p>
-                            <p class="slds-var-m-bottom_xx-small">Priority: {testData.Priority__c}</p>
+                    <div class="slds-var-p-horizontal_small " > <!-- style="width:450px; height:120; border-style:solid;" -->
+                        <div class="slds-media" >
+                            <div class="slds-media__figure slds-var-m-top_small">
+                                <lightning-icon icon-name="action:new_note" alternative-text="New note" title="New note"></lightning-icon>
+                            </div>
+                            <div class="slds-grid">
+                                <div class="slds-size_1-of-2 slds-var-m-around_medium">
+                                    <p key={toDoItem.Id} class="slds-var-m-bottom_xx-small" >{toDoItem.Account__c}</p>
+                                    <p key={toDoItem.Id} class="slds-var-m-bottom_xx-small">Priority: {toDoItem.Priority__c}</p>
+                                </div>
+                                <div class="slds-size_1-of-2 slds-var-m-around_medium">
+                                    <p key={toDoItem.Id} class="slds-var-m-bottom_xx-small">{toDoItem.Status__c}</p>
+                                    <p key={toDoItem.Id}> Due: <lightning-formatted-date-time value={toDoItem.Due_Date__c}></lightning-formatted-date-time> </p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="slds-size_1-of-2 slds-var-m-around_medium">
-                            <p class="slds-var-m-bottom_xx-small">{testData.Status__c}</p>
-                            <p> Due: <lightning-formatted-date-time value={testData.Due_Date__c}></lightning-formatted-date-time> </p>
+                        
+                        <div>
+                            <p>Notes:</p>
+                            <p class="slds-var-m-bottom_medium">{toDoItem.Notes__c}</p>
                         </div>
                     </div>
-                </div>
-                
-                <div>
-                    <p>Notes:</p>
-                    <p class="slds-var-m-bottom_medium">{testData.Notes__c}</p>
-                </div>
+                </lightning-card>    
             </div>
-    
-        </lightning-card> 
-
+        </template> <!-- End of task iter  -->
     </div>
+    
+    <lightning-card>
+        <div style="background-color:greenyellow; width:450px; height:450px;">
+
+        </div>
+    </lightning-card>
+    
+
+    <lightning-card>
+        <div style="background-color:aqua; width:450px; height:450px;">
+
+        </div>
+    </lightning-card>
+    
+
+</template> <!-- End of component  -->
+
+    
+
+    <!-- Task Container  -->
+    <!-- <lightning-card> -->
+
+        <!-- Single To Do Card  -1 -->
+        
+            <!-- <p key={toDoItem.Id}> </p>
+            <div draggable="true" ondragstart={drag} style="width:450px; height:150px;">
+                    <button type="button" >Edit Task</button>
+                    
+                    <div class="slds-var-p-horizontal_small " style="width:450px; height:120; border-style:solid;">
+                        
+                        <div class="slds-media" >
+                            <div class="slds-media__figure slds-var-m-top_small">
+                                <lightning-icon icon-name="action:new_note" alternative-text="New note" title="New note"></lightning-icon>
+                            </div>
+                            <div class="slds-grid">
+                                <div class="slds-size_1-of-2 slds-var-m-around_medium">
+                                    <p class="slds-var-m-bottom_xx-small" >{toDoItem.Account__c}</p>
+                                    <p class="slds-var-m-bottom_xx-small">Priority: {toDoItem.Priority__c}</p>
+                                </div>
+                                <div class="slds-size_1-of-2 slds-var-m-around_medium">
+                                    <p class="slds-var-m-bottom_xx-small">{toDoItem.Status__c}</p>
+                                    <p> Due: <lightning-formatted-date-time value={toDoItem.Due_Date__c}></lightning-formatted-date-time> </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <p>Notes:</p>
+                            <p class="slds-var-m-bottom_medium">{toDoItem.Notes__c}</p>
+                        </div>
+                    </div>
+            </div>  -->
+        <!-- End single card-->
+        
+    <!-- </lightning-card> -->
+    
     
 
 
@@ -123,4 +186,3 @@
 </div>
 -->
 		
-</template>

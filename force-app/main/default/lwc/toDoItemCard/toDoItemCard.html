@@ -1,0 +1,39 @@
+<template>
+    <div title={toDoItem.Id} style="border-style:solid;"  draggable="true" data-id={toDoItem.Id} ondragstart={itemDragStart} class="slds-var-m-around_medium">
+        <p key={toDoItem.Id} class="slds-var-m-bottom_xx-small" >{toDoItem.Subject__c}</p>
+        <p key={toDoItem.Id} class="slds-var-m-bottom_xx-small">Priority: {toDoItem.Priority__c}</p>
+        <p key={toDoItem.Id} class="slds-var-m-bottom_xx-small">{toDoItem.Status__c}</p>
+        <p key={toDoItem.Id}> Due: <lightning-formatted-date-time value={toDoItem.Due_Date__c}></lightning-formatted-date-time> </p>
+    </div>
+    
+    <!-- <div style="background-color: #f2f2f2">
+        <div key={toDoItem.Id} draggable="true" ondragstart={drag} class="slds-var-m-around_medium" style="border-style:solid; border-radius:25px" > 
+            <lightning-card title={toDoItem.Subject__c} class="">
+                <button type="button" >Edit Task</button>
+
+                <div class="slds-var-p-horizontal_small " >
+                    <div class="slds-media" >
+                        <div class="slds-media__figure slds-var-m-top_small">
+                            <lightning-icon icon-name="action:new_note" alternative-text="New note" title="New note"></lightning-icon>
+                        </div>
+                        <div class="slds-grid">
+                            <div class="slds-size_1-of-2 slds-var-m-around_medium">
+                                <p key={toDoItem.Id} class="slds-var-m-bottom_xx-small" >{toDoItem.Account__c}</p>
+                                <p key={toDoItem.Id} class="slds-var-m-bottom_xx-small">Priority: {toDoItem.Priority__c}</p>
+                            </div>
+                            <div class="slds-size_1-of-2 slds-var-m-around_medium">
+                                <p key={toDoItem.Id} class="slds-var-m-bottom_xx-small">{toDoItem.Status__c}</p>
+                                <p key={toDoItem.Id}> Due: <lightning-formatted-date-time value={toDoItem.Due_Date__c}></lightning-formatted-date-time> </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <p>Notes:</p>
+                        <p class="slds-var-m-bottom_medium">{toDoItem.Notes__c}</p>
+                    </div>
+                </div>
+            </lightning-card>    
+        </div>
+    </div> -->
+</template>
