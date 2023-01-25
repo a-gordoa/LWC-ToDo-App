@@ -1,5 +1,4 @@
 <template>
-
     <lightning-card>
         <div data-id="Not Started" title="Not Started" ondrop={handleDropNotStarted} class="target" style="border-style:soid;" >
             <H3>Not Started </H3>
@@ -14,8 +13,6 @@
     
 
     <lightning-card>
-        {newStatusFromDrop}
-        {toDoItemsFromApex}
         <div data-id="In Progress" title="In Progress" ondrop={handleDropInProgress} class="target" style="border-style:soid; ">
             <H3>In Progress </H3>
             <template for:each={inProgressList} for:item="iter">
@@ -38,7 +35,4 @@
             </template>
         </div>
     </lightning-card>
-
-    
-    
 </template>

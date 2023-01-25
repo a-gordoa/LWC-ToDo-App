@@ -1,6 +1,6 @@
 public with sharing class ToDoItemController {
     
-    @AuraEnabled
+    @AuraEnabled (cacheable=true)
     public static List<To_Do_Item__c> getToDoItems() {
         try {
             // add a "Assign To field, and have it filter based on current user
@@ -19,14 +19,13 @@ public with sharing class ToDoItemController {
             // updates the TDI with with Status field from the section it was dropped into. 
             todoitem_to_update.Status__c = newStatus;
 
-            //update todoitem_to_update;
+            update todoitem_to_update;
 
              List<To_Do_Item__c> reutrnList = [SELECT Id, Status__c FROM To_Do_Item__c];
             
             return reutrnList;
-            
-        // } catch (Exception e) {
-        //     throw new AuraHandledException(e.getMessage());
-        // }
+        
     }
+
+
 }

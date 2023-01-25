@@ -1,13 +1,20 @@
 import { LightningElement, api, track, wire } from 'lwc';
 import getToDoItems from '@salesforce/apex/ToDoItemController.getToDoItems';
 import updateDroppedToDoItem from '@salesforce/apex/ToDoItemController.updateDroppedToDoItem';
+import { updateRecord } from 'lightning/uiRecordApi';
+import SUBJECT_FIELD from '@salesforce/schema/To_do_Item__C.Subject__c';
+import STATUS_FIELD from '@salesforce/schema/To_do_Item__C.Status__c';
+import ID_FIELD from '@salesforce/schema/To_do_Item__C.Id';
+import { refreshApex } from '@salesforce/apex';
+
 
 export default class ToDoApp extends LightningElement {
 
     
 
     // holds all ToDoItems in a list
-    ToDoItemList;
+    @track
+    ToDoItemList = [];
 
     // lists for the various status' of each ToDoItem, which will be used to
     // sort them into different drag/drop divs
@@ -22,51 +29,38 @@ export default class ToDoApp extends LightningElement {
 
     draggingId;
 
-    @track
-    newStatusFromDrop;
+    refreshToken = 1;
 
-    
-    // @wire(updateDroppedToDoItem,{toDoItemId: this.draggingId, newStatus: '$newStatusFromDrop'})
-    // toDoItemsFromApex({data,error}){
-    //     console.log('WIRE CALL PRE IF. DATA = ' +JSON.stringify(data) + ' Error = ' + JSON.stringify(error));
-    //     if (data) {
-    //     console.log('WIRE DATA. STATUS = ' + this.newStatusFromDrop);    
-    //     this.newStatusFromDrop = '';
-
-    //     } else if (error) {
-    //         console.log('Wire ERROR = ' + error.message)
-    //     } else {
-    //         console.log('Wire received nothing')
-    //     }
-    // }
-
-    
-    
+    wireDataHolderToRefresh = null;
 
 
-    connectedCallback(){
-        // collects all ToDoItems in the system
-        getToDoItems()
-        .then( result =>{
-            this.toDoItemList = result;
-            // sorts the toDoItems into their respective lists
-            //this.sortToDoItems(this.toDoItemList);
-            //console.log(JSON.stringify(result));
-
-            this.sortToDoItems(this.toDoItemList);
-
-            console.log('notStartedList = ' + this.notStartedList);
 
 
-        })
-        .catch(error =>{
-            console.log('toDoItemList Error message: ' + error.message + ' error name: ' + error.name + ' error stack: ' + error.stack);
-        })
-    }
+    @wire(getToDoItems)
+    ToDoItemListWire(value){
+
+        const {data,error} = value;
+        this.wireDataHolderToRefresh = value;
+        if (data) {
+            this.ToDoItemList = data;
+            console.log('Wire Data = ' + JSON.stringify(data));
+            console.log('this.ToDoItemList within WIRE = ' + JSON.stringify(this.ToDoItemList))
+        
+            this.sortToDoItems(this.ToDoItemList);
+        } else if (error) {
+            console.log('Wire Error = ' + error);
+        }
+    };
+
+
     
     sortToDoItems(ToDoItemList){
+        this.notStartedList = [];
+        this.inProgressList = [];
+        this.completedList = [];
+        // console.log(JSON.stringify(this.ToDoItemList));
         for (const iter of ToDoItemList) {
-            console.log('iter = ' + iter.Status__c)
+            console.log('iter Subj = ' + iter.Subject__c + ' Status  = ' + iter.Status__c)
             switch (iter.Status__c) {
                 case 'Not Started' : this.notStartedList.push(iter);
                 break;
@@ -89,7 +83,7 @@ export default class ToDoApp extends LightningElement {
             //target.addEventListener('drop',this.handleDrop);
             target.addEventListener('dragover', this.handleDragOver);
             target.addEventListener('dragenter', this.handleDragEnter);
-        })
+        })        
     }
 
     handleStartDrag(event) {
@@ -105,57 +99,41 @@ export default class ToDoApp extends LightningElement {
     handleDragOver(event) {
         event.preventDefault();
         return false;
-      }
-
-
-      handleDropCompleted(event) {
-        console.log('handleDropCompleted ASDFASDF');
-        this.newStatusFromDrop = 'In Completed';
-    
-    }
-    handleDropInProgress(event) {
-
-        // console.log('handleDropInProgress ASDFASDF');
-        // this.newStatusFromDrop = 'In Progress';
-        // console.log('HandleDrop Staus = ' + this.newStatusFromDrop + ' ID = ' + this.draggingId);
-        //updateDroppedToDoItem(String toDoItemId, String newStatus)
-        updateDroppedToDoItem({toDoItemId: this.draggingId, newStatus: 'In Progress'})
-        .then(result=>{
-            getToDoItems()
-                .then( result =>{
-                this.toDoItemList = result;
-                // sorts the toDoItems into their respective lists
-                //this.sortToDoItems(this.toDoItemList);
-                //console.log(JSON.stringify(result));
-
-                this.sortToDoItems(this.toDoItemList);
-                console.log('notStartedList = ' + this.notStartedList);
-                })
-                .catch(error =>{
-                    console.log('toDoItemList Error message: ' + error.message + ' error name: ' + error.name + ' error stack: ' + error.stack);
-                })
-        })
-        .catch(error=>{
-            console.log('handleDropInProgress Error message: ' + error.message + ' error name: ' + error.name + ' error stack: ' + error.stack);
-        })
-
-        
-
     }
 
-    // handleDrop(event) {
-    //     console.log('Dropped. Event = ' + JSON.stringify(event));
-    //     // console.log('event for handleDrop = ' + JSON.stringify(event));
-    //     // var divId = event.dataTransfer;
-    //     // console.log('divID =' + JSON.stringify(divId));
-    //     event.stopPropagation();
 
+    handleDropCompleted() {
+        this.updateToDoFieldsOnDrop('Completed', this.draggingId);
+    }
+
+    handleDropInProgress() {
+        this.updateToDoFieldsOnDrop('In Progress', this.draggingId);       
+    }
+
+    handleDropNotStarted() {
+        this.updateToDoFieldsOnDrop('Not Started', this.draggingId);       
+    }
+
+    updateToDoFieldsOnDrop(status, toDoId) {
+
+        const fields={};
+        fields[ID_FIELD.fieldApiName] = toDoId;
+        fields[STATUS_FIELD.fieldApiName] = status;
+        console.log(JSON.stringify('fields = ' +  JSON.stringify(fields)));
         
-    // }
-    
+        const recordInput = {fields}
+        console.log(JSON.stringify('recordInput = ' + JSON.stringify(recordInput)));
+        updateRecord(recordInput)   
+            .then(() => {
+                this.refreshToken = Date.now();
+                refreshApex(this.wireDataHolderToRefresh);
+            })
+            .catch(error=>{
+                console.log('Made it to RECORD ERROR = ' + error.message + ' CODE = ' + error.errorCode )
+                refreshApex(this.wireDataHolderToRefresh);
+            })
+    }
 
-
-   
 
 
     
