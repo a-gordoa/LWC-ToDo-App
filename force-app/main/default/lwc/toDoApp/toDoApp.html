@@ -1,38 +1,96 @@
 <template>
     <lightning-card>
-        <div data-id="Not Started" title="Not Started" ondrop={handleDropNotStarted} class="target" style="border-style:soid;" >
-            <H3>Not Started </H3>
-            <template for:each={notStartedList} for:item="iter">
-                <div key={iter.Id} >
-                    <c-to-do-item-card onstartdrag={handleStartDrag} to-do-item={iter}></c-to-do-item-card>
-                </div>
-            </template>
-
-        </div>
-    </lightning-card>
-    
-
-    <lightning-card>
-        <div data-id="In Progress" title="In Progress" ondrop={handleDropInProgress} class="target" style="border-style:soid; ">
-            <H3>In Progress </H3>
-            <template for:each={inProgressList} for:item="iter">
-                <div key={iter.Id} >
-                    <c-to-do-item-card onstartdrag={handleStartDrag} to-do-item={iter}></c-to-do-item-card>
-                </div>
-            </template>
-        </div>
-    </lightning-card>
-
-
-    <lightning-card>
-        <div data-id="Completed" title="Completed" ondrop={handleDropCompleted} class="target" style="border-style:soid;">
-            <H3>Completed </H3>
         
-            <template for:each={completedList} for:item="iter">
-                <div key={iter.Id} >
-                    <c-to-do-item-card onstartdrag={handleStartDrag} to-do-item={iter}></c-to-do-item-card>
-                </div>
-            </template>
+        <div class="slds-p-around_medium" >
+            <button class="slds-button slds-button_neutral ">New To Do</button>
         </div>
+
+        <div class="slds-grid">
+            
+            <!-- <lightning-radio-group name="statusGroup"
+            label="Status Filter"
+            options={statusOptions}
+            value={statusValue}
+            type="button"
+            class="slds-size_2-of-5 slds-p-around_medium"></lightning-radio-group> -->
+
+            <lightning-combobox
+            name="statusFilter"
+            label="Status Filter"
+            value={statusValue}
+            placeholder="All"
+            options={statusOptions}
+            onchange={handleStatusFilterSelect} 
+            class="slds-size_1-of-2 slds-p-around_medium"></lightning-combobox>
+
+
+            <lightning-combobox
+            name="priorityFilter"
+            label="Priority Filter"
+            value={priorityValue}
+            placeholder="All"
+            options={priorityOptions}
+            onchange={handlePriorityFilterSelect}
+            class="slds-size_1-of-2 slds-p-around_medium" ></lightning-combobox>
+
+            <!-- <lightning-radio-group name="priorityGroup"
+            label="Priority Filter"
+            options={priorityOptions}
+            value={priorityValue}
+            type="button"
+            class="slds-size_2-of-5 slds-p-around_medium"></lightning-radio-group>  -->
+            
+        </div>
+        
     </lightning-card>
+
+    <template if:true={notStartedToggle}>
+        <lightning-card>
+            <div data-id="Not Started" title="Not Started" ondrop={handleDropNotStarted} class="target" style="border-style:soid;" >
+                <H3>Not Started </H3>
+                <lightning-layout multiple-rows="true" pull-to-boundary="small">
+                    <template for:each={notStartedList} for:item="iter">
+                        <lightning-layout-item key={iter.Id} size="6" padding="around-small">
+                            <c-to-do-item-card onstartdrag={handleStartDrag} to-do-item={iter}></c-to-do-item-card>
+                        </lightning-layout-item>
+                    </template>
+                </lightning-layout>
+            </div>
+        </lightning-card>
+    </template>
+    
+    
+    <template if:true={inProgressToggle}>
+        <lightning-card>
+            <div data-id="In Progress" title="In Progress" ondrop={handleDropInProgress} class="target" style="border-style:soid; ">
+                <H3>In Progress </H3>
+    
+                <lightning-layout multiple-rows="true" pull-to-boundary="small">
+                    <template for:each={inProgressList} for:item="iter">
+                        <lightning-layout-item key={iter.Id} size="6" padding="around-small">
+                                <c-to-do-item-card onstartdrag={handleStartDrag} to-do-item={iter}></c-to-do-item-card>
+                        </lightning-layout-item>
+                    </template>
+                </lightning-layout>
+            </div>
+        </lightning-card>
+    </template>
+
+
+    <template if:true={completedToggle}>
+        <lightning-card>
+            <div data-id="Completed" title="Completed" ondrop={handleDropCompleted} class="target" style="border-style:soid;">
+                <H3>Completed </H3>
+            
+                <lightning-layout multiple-rows="true" pull-to-boundary="small">
+                    <template for:each={completedList} for:item="iter">
+                        <lightning-layout-item key={iter.Id} size="6" padding="around-small">
+                            <c-to-do-item-card onstartdrag={handleStartDrag} to-do-item={iter}></c-to-do-item-card>
+                        </lightning-layout-item>
+                    </template>
+                </lightning-layout>
+            </div>
+        </lightning-card>
+    </template>
+    
 </template>

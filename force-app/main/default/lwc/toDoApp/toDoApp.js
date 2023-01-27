@@ -10,6 +10,9 @@ import { refreshApex } from '@salesforce/apex';
 
 export default class ToDoApp extends LightningElement {
 
+    inProgressToggle = true;
+    notStartedToggle = true;
+    completedToggle = true;
     
 
     // holds all ToDoItems in a list
@@ -27,11 +30,36 @@ export default class ToDoApp extends LightningElement {
     @track
     completedList=[];
 
+    // used to store the ID of the card being dragged, which is then stored in the 
+    // 
     draggingId;
 
-    refreshToken = 1;
-
     wireDataHolderToRefresh = null;
+
+
+    // Stores the value and options that are used in the Radio Buttons for the filtering Status
+    statusValue = 'All';
+    get statusOptions() {
+        return [
+            { label: 'All', value: 'all' },
+            { label: 'Not Started', value: 'Not Started' },
+            { label: 'In Progress', value: 'In Progress' },
+            { label: 'Completed', value: 'completed' }
+        ];
+    }
+
+
+    // Stores the value and options that are used in the Radio Buttons for the filtering Status
+    priorityValue = 'All';
+    get priorityOptions() {
+        return [
+            { label: 'All', value: 'all' },
+            { label: 'Low', value: 'low' },
+            { label: 'Normal', value: 'normal' },
+            { label: 'High', value: 'high' }
+        ];
+    }
+
 
 
 
@@ -78,7 +106,7 @@ export default class ToDoApp extends LightningElement {
 
     renderedCallback() {
         const targets = this.template.querySelectorAll(".target");
-        console.log('Tagets = ' + JSON.stringify(targets));
+        //console.log('Tagets = ' + JSON.stringify(targets));
         targets.forEach(target=>{
             //target.addEventListener('drop',this.handleDrop);
             target.addEventListener('dragover', this.handleDragOver);
@@ -125,7 +153,6 @@ export default class ToDoApp extends LightningElement {
         console.log(JSON.stringify('recordInput = ' + JSON.stringify(recordInput)));
         updateRecord(recordInput)   
             .then(() => {
-                this.refreshToken = Date.now();
                 refreshApex(this.wireDataHolderToRefresh);
             })
             .catch(error=>{
@@ -135,6 +162,46 @@ export default class ToDoApp extends LightningElement {
     }
 
 
+    handlePriorityFilterSelect(event) {
+
+        
+
+    }
+
+    handleStatusFilterSelect(event) {
+
+        this.statusValue = event.detail.value;
+        
+        switch (this.statusValue) {
+            case 'notStarted':
+                this.notStartedToggle = true;
+                this.inProgressToggle = false;
+                this.completedToggle = false;
+                break;
+
+            case 'inProgress':
+                this.notStartedToggle = false;
+                this.inProgressToggle = true;
+                this.completedToggle = false;
+                break; 
+
+            case 'completed':
+                this.notStartedToggle = false;
+                this.inProgressToggle = false;
+                this.completedToggle = true;
+                break;
+                
+            case 'all':
+                this.notStartedToggle = true;
+                this.inProgressToggle = true;
+                this.completedToggle = true;
+                break;    
+        
+            default:
+                break;
+        }
+
+    }
 
     
 }
