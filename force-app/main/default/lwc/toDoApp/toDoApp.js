@@ -2,13 +2,63 @@ import { LightningElement, api, track, wire } from 'lwc';
 import getToDoItems from '@salesforce/apex/ToDoItemController.getToDoItems';
 import updateDroppedToDoItem from '@salesforce/apex/ToDoItemController.updateDroppedToDoItem';
 import { updateRecord } from 'lightning/uiRecordApi';
-import SUBJECT_FIELD from '@salesforce/schema/To_do_Item__C.Subject__c';
-import STATUS_FIELD from '@salesforce/schema/To_do_Item__C.Status__c';
+
+import TO_DO_OBJ from '@salesforce/schema/To_Do_Item__c';
+import SUBJECT_FIELD from '@salesforce/schema/To_do_Item__c.Subject__c';
+import STATUS_FIELD from '@salesforce/schema/To_do_Item__c.Status__c';
+import PRIORITY_FIELD from '@salesforce/schema/To_do_Item__c.Priority__c';
+import DUE_DATE_FIELD from '@salesforce/schema/To_do_Item__c.Due_Date__c';
 import ID_FIELD from '@salesforce/schema/To_do_Item__C.Id';
 import { refreshApex } from '@salesforce/apex';
 
 
 export default class ToDoApp extends LightningElement {
+
+    // imports To Do custom object for use in the create record form 
+    toDoObject = TO_DO_OBJ;
+    
+    // imports fields to be used in create record edit form
+    dueDateField = DUE_DATE_FIELD;
+    priorityField = PRIORITY_FIELD;
+    statusField = STATUS_FIELD;
+    subjectField = SUBJECT_FIELD;
+
+    // initializes boolean that controlls 
+    showNewRecordScreen = false;
+
+    // Fires on "Save" when creating a new To Do
+    // Refreshes the list of ToDoItems on screen and closes the New To Do window
+    handleToDoCreated(event){
+        refreshApex(this.wireDataHolderToRefresh);
+        this.showNewRecordScreen = false;
+    }
+    
+    // Fires on cancel button being pressed. 
+    // Collects all input fields and resets them
+    handleReset(event) {
+        const inputFields = this.template.querySelectorAll(
+            'lightning-input-field'
+        );
+        if (inputFields) {
+            inputFields.forEach(field => {
+                field.reset();
+            });
+        }
+        // resets bool that controls template toggle 
+        this.showNewRecordScreen = false;
+
+     }
+
+    // Opens the new To Do window
+    handleNewToDoClick() {
+        this.showNewRecordScreen = true;
+    }
+
+    handleRefresh() {
+        console.log('Delete Log. ' + JSON.stringify(this.wireDataHolderToRefresh));
+        refreshApex(this.wireDataHolderToRefresh);
+        
+    }
 
     inProgressToggle = true;
     notStartedToggle = true;
@@ -41,10 +91,10 @@ export default class ToDoApp extends LightningElement {
     statusValue = 'All';
     get statusOptions() {
         return [
-            { label: 'All', value: 'all' },
+            { label: 'All', value: 'All' },
             { label: 'Not Started', value: 'Not Started' },
             { label: 'In Progress', value: 'In Progress' },
-            { label: 'Completed', value: 'completed' }
+            { label: 'Completed', value: 'Completed' }
         ];
     }
 
@@ -53,10 +103,10 @@ export default class ToDoApp extends LightningElement {
     priorityValue = 'All';
     get priorityOptions() {
         return [
-            { label: 'All', value: 'all' },
-            { label: 'Low', value: 'low' },
-            { label: 'Normal', value: 'normal' },
-            { label: 'High', value: 'high' }
+            { label: 'All', value: 'All' },
+            { label: 'Low', value: 'Low' },
+            { label: 'Normal', value: 'Normal'},
+            { label: 'High', value: 'High' }
         ];
     }
 
@@ -64,7 +114,7 @@ export default class ToDoApp extends LightningElement {
 
 
 
-    @wire(getToDoItems)
+    @wire(getToDoItems, {priorityArg: '$priorityValue'})
     ToDoItemListWire(value){
 
         const {data,error} = value;
@@ -163,9 +213,8 @@ export default class ToDoApp extends LightningElement {
 
 
     handlePriorityFilterSelect(event) {
-
-        
-
+        this.priorityValue = event.detail.value;
+        console.log('this.priorityValue = ' + this.priorityValue);
     }
 
     handleStatusFilterSelect(event) {
@@ -173,25 +222,25 @@ export default class ToDoApp extends LightningElement {
         this.statusValue = event.detail.value;
         
         switch (this.statusValue) {
-            case 'notStarted':
+            case 'Not Started':
                 this.notStartedToggle = true;
                 this.inProgressToggle = false;
                 this.completedToggle = false;
                 break;
 
-            case 'inProgress':
+            case 'In Progress':
                 this.notStartedToggle = false;
                 this.inProgressToggle = true;
                 this.completedToggle = false;
                 break; 
 
-            case 'completed':
+            case 'Completed':
                 this.notStartedToggle = false;
                 this.inProgressToggle = false;
                 this.completedToggle = true;
                 break;
                 
-            case 'all':
+            case 'All':
                 this.notStartedToggle = true;
                 this.inProgressToggle = true;
                 this.completedToggle = true;

@@ -26,13 +26,66 @@
                 </div>
               </div>
 
+                    <!-- Edit To Do Item Modal -->
+          <template if:true={showEditModal}>
+            <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container" >
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse">
+                        <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                            <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+                        </svg>
+                        <span class="slds-assistive-text">Cancel and close</span>
+                    </button>
+                    <div class="slds-modal__header">
+                        <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Edit To Do Item</h1>
+                    </div>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="overflow: visible; overflow-y: visible;">
+                        <!-- Start of form body -->
+                        <lightning-record-edit-form object-api-name={toDoObject} onsuccess={handleToDoUpdate}  record-id={toDoItem.Id} >
+                            <lightning-messages></lightning-messages>
+                            
+                            <div class="slds-grid">
+                                <div class="slds-col slds-size_1-of-2  slds-p-around_large" >
+                                  <!-- ASDFASDF -->
+                                    <lightning-input-field field-name={subjectField} > </lightning-input-field>
+                                    <lightning-input-field field-name={statusField} > </lightning-input-field>
+                                </div>
+        
+                                <div class="slds-col slds-size_1-of-2 slds-p-around_large" >
+                                    <lightning-input-field field-name={priorityField} > </lightning-input-field>
+                                    <lightning-input-field field-name={dueDateField} > </lightning-input-field>
+                                </div>
+                            </div>
+                            
+        
+                            <div class="slds-p-right_large slds-text-align_right">
+
+                                
+                                <lightning-button class="slds-m-top_small slds-p-right_medium" variant="brand" type="submit" label="Save-123">
+                                </lightning-button>
+                            
+        
+                                <lightning-button class="slds-m-top_small" label="Cancel" onclick={handleReset}>
+                                </lightning-button>
+                            </div>
+                            
+                        </lightning-record-edit-form>
+                        
+                    </div>
+                </div>
+            </section>
+              <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+          </template>
+
+
               <!-- Menu to select Edit/Delete -->
               <lightning-button-menu alternative-text="Show menu" menu-alignment="auto" onselect={handleOnMenuSelect}>
-                <lightning-menu-item value="Edit" label="Edit"></lightning-menu-item>
-                <lightning-menu-item value="Delete" label="Delete"></lightning-menu-item>
+                <lightning-menu-item value="Edit" label="Edit" onclick={handleEdit} ></lightning-menu-item>
+                <lightning-menu-item value="Delete" label="Delete" onclick={handleDelete} ></lightning-menu-item>
             </lightning-button-menu>
             </header>
-        </div>            
+        </div>
+
     </article>
     </div>
     

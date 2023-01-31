@@ -1,11 +1,18 @@
 public with sharing class ToDoItemController {
     
     @AuraEnabled (cacheable=true)
-    public static List<To_Do_Item__c> getToDoItems() {
+    public static List<To_Do_Item__c> getToDoItems(String priorityArg) {
         try {
             // add a "Assign To field, and have it filter based on current user
-            List<To_Do_Item__c> toDoList = [SELECT Id, Subject__c, Status__c, Priority__c, Notes__c, Due_Date__c, Account__c FROM To_Do_Item__c]; 
+
+            if (priorityArg == null || priorityArg == 'All') {
+                List<To_Do_Item__c> toDoList = [SELECT Id, Subject__c, Status__c, Priority__c, Notes__c, Due_Date__c, Account__c FROM To_Do_Item__c]; 
+                return toDoList;
+            } else {
+                List<To_Do_Item__c> toDoList = [SELECT Id, Subject__c, Status__c, Priority__c, Notes__c, Due_Date__c, Account__c FROM To_Do_Item__c WHERE Priority__c = :priorityArg]; 
             return toDoList;
+            }
+            
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
@@ -25,6 +32,13 @@ public with sharing class ToDoItemController {
             
             return reutrnList;
         
+    }
+
+    @AuraEnabled
+    public static void deleteToDoItem(String id){
+        To_Do_Item__c itemToDelete = [SELECT id FROM To_Do_Item__c WHERE id = :id];
+
+        delete itemToDelete;
     }
 
 

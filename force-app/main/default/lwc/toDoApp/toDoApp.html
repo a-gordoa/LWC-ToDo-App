@@ -2,18 +2,18 @@
     <lightning-card>
         
         <div class="slds-p-around_medium" >
-            <button class="slds-button slds-button_neutral ">New To Do</button>
+            <button class="slds-button slds-button_neutral " onclick={handleNewToDoClick}>New To Do</button>
         </div>
+
+        <!-- <lightning-record-form
+            object-api-name={toDoObject}
+            fields={toDoCreateRecordFields}
+            onsuccess={handleToDoRecordCreated}
+        >
+        </lightning-record-form> -->
 
         <div class="slds-grid">
             
-            <!-- <lightning-radio-group name="statusGroup"
-            label="Status Filter"
-            options={statusOptions}
-            value={statusValue}
-            type="button"
-            class="slds-size_2-of-5 slds-p-around_medium"></lightning-radio-group> -->
-
             <lightning-combobox
             name="statusFilter"
             label="Status Filter"
@@ -32,17 +32,58 @@
             options={priorityOptions}
             onchange={handlePriorityFilterSelect}
             class="slds-size_1-of-2 slds-p-around_medium" ></lightning-combobox>
-
-            <!-- <lightning-radio-group name="priorityGroup"
-            label="Priority Filter"
-            options={priorityOptions}
-            value={priorityValue}
-            type="button"
-            class="slds-size_2-of-5 slds-p-around_medium"></lightning-radio-group>  -->
-            
         </div>
-        
     </lightning-card>
+
+    <!-- New To Do Item modal -->
+    <template if:true={showNewRecordScreen}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container" >
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse">
+                    <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+                    </svg>
+                    <span class="slds-assistive-text">Cancel and close</span>
+                </button>
+                <div class="slds-modal__header">
+                    <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Create a new To Do Item</h1>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="overflow: visible; overflow-y: visible;">
+                    <!-- Start of form body -->
+                    <lightning-record-edit-form object-api-name={toDoObject} onsuccess={handleToDoCreated}>
+                        <lightning-messages></lightning-messages>
+                        
+                        <div class="slds-grid">
+                            <div class="slds-col slds-size_1-of-2  slds-p-around_large" >
+                                <lightning-input-field field-name={subjectField} > </lightning-input-field>
+                                <lightning-input-field field-name={statusField} > </lightning-input-field>
+                            </div>
+    
+                            <div class="slds-col slds-size_1-of-2 slds-p-around_large" >
+                                <lightning-input-field field-name={priorityField} > </lightning-input-field>
+                                <lightning-input-field field-name={dueDateField} > </lightning-input-field>
+                            </div>
+                        </div>
+                        
+    
+                        <div class="slds-p-right_large slds-text-align_right">
+
+                            
+                            <lightning-button class="slds-m-top_small slds-p-right_medium" variant="brand" type="submit" label="Save-123">
+                            </lightning-button>
+                        
+    
+                            <lightning-button class="slds-m-top_small" label="Cancel" onclick={handleReset}>
+                            </lightning-button>
+                        </div>
+                        
+                    </lightning-record-edit-form>
+                    
+                </div>
+            </div>
+        </section>
+          <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
 
     <template if:true={notStartedToggle}>
         <lightning-card>
@@ -51,7 +92,7 @@
                 <lightning-layout multiple-rows="true" pull-to-boundary="small">
                     <template for:each={notStartedList} for:item="iter">
                         <lightning-layout-item key={iter.Id} size="6" padding="around-small">
-                            <c-to-do-item-card onstartdrag={handleStartDrag} to-do-item={iter}></c-to-do-item-card>
+                            <c-to-do-item-card onstartdrag={handleStartDrag} onupdateordeletecompleted={handleRefresh} to-do-item={iter}></c-to-do-item-card>
                         </lightning-layout-item>
                     </template>
                 </lightning-layout>
@@ -68,7 +109,7 @@
                 <lightning-layout multiple-rows="true" pull-to-boundary="small">
                     <template for:each={inProgressList} for:item="iter">
                         <lightning-layout-item key={iter.Id} size="6" padding="around-small">
-                                <c-to-do-item-card onstartdrag={handleStartDrag} to-do-item={iter}></c-to-do-item-card>
+                                <c-to-do-item-card onstartdrag={handleStartDrag} onupdateordeletecompleted={handleRefresh} to-do-item={iter}></c-to-do-item-card>
                         </lightning-layout-item>
                     </template>
                 </lightning-layout>
@@ -85,7 +126,7 @@
                 <lightning-layout multiple-rows="true" pull-to-boundary="small">
                     <template for:each={completedList} for:item="iter">
                         <lightning-layout-item key={iter.Id} size="6" padding="around-small">
-                            <c-to-do-item-card onstartdrag={handleStartDrag} to-do-item={iter}></c-to-do-item-card>
+                            <c-to-do-item-card onstartdrag={handleStartDrag} onupdateordeletecompleted={handleRefresh} to-do-item={iter}></c-to-do-item-card>
                         </lightning-layout-item>
                     </template>
                 </lightning-layout>
