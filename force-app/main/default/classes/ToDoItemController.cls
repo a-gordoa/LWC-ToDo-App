@@ -1,4 +1,4 @@
-public with sharing class ToDoItemController {
+public without sharing class ToDoItemController {
     
     @AuraEnabled (cacheable=true)
     public static List<To_Do_Item__c> getToDoItems(String priorityArg) {

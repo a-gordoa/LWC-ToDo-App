@@ -26,22 +26,26 @@ export default class ToDoItemCard extends LightningElement {
 
     showEditModal = false;
 
+    itemDragStart(event) {
+      console.log(' itemDragStart this.toDoItem.Id = ' + this.toDoItem.Id);
+    
+      this.dispatchEvent(new CustomEvent('startdrag', {detail: this.toDoItem.Id}));
+      console.log('this.dispatchEvent = ' + JSON.stringify(this.dispatchEvent));
+      // this.dispatchEvent(CustomEvent('startdrag', {detail: 'asdf'}));
+      
+      // console.log('itemDragStart event = ' + JSON.stringify(event));
+      // event.dataTransfer.setData("text/plain", 'You did it');
+
+      // this.dragStart = event.target.title;
+      // console.log('event.target.title = ' + event.target.title);
+
+  }
+
     renderedCallback() {
         this.addEventListener('dragstart', this.itemDragStart);
     }
 
-    itemDragStart(event) {
-    
-        this.dispatchEvent(CustomEvent('startdrag', {detail: this.toDoItem.Id}));
-        // this.dispatchEvent(CustomEvent('startdrag', {detail: 'asdf'}));
-        
-        // console.log('itemDragStart event = ' + JSON.stringify(event));
-        // event.dataTransfer.setData("text/plain", 'You did it');
 
-        // this.dragStart = event.target.title;
-        // console.log('event.target.title = ' + event.target.title);
-
-    }
 
     handleToDoUpdate() {
       console.log('Success');

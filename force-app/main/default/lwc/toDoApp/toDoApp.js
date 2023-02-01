@@ -126,7 +126,7 @@ export default class ToDoApp extends LightningElement {
         
             this.sortToDoItems(this.ToDoItemList);
         } else if (error) {
-            console.log('Wire Error = ' + error);
+            console.log('Wire Error = ' + JSON.stringify(error));
         }
     };
 
@@ -206,7 +206,7 @@ export default class ToDoApp extends LightningElement {
                 refreshApex(this.wireDataHolderToRefresh);
             })
             .catch(error=>{
-                console.log('Made it to RECORD ERROR = ' + error.message + ' CODE = ' + error.errorCode )
+                console.log('Made it to RECORD ERROR = ' + error.message + ' CODE = ' + error.errorCode + ' error Obj = ' + JSON.stringify(error));
                 refreshApex(this.wireDataHolderToRefresh);
             })
     }
