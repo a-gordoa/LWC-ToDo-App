@@ -1,11 +1,18 @@
 import { api, LightningElement } from 'lwc';
 import deleteToDoItem from '@salesforce/apex/ToDoItemController.deleteToDoItem';
+import getToDoItemRecord from '@salesforce/apex/ToDoItemController.getToDoItemRecord';
+import updateEditedToDoItem from '@salesforce/apex/ToDoItemController.updateEditedToDoItem';
+
+
+
 import TO_DO_OBJ from '@salesforce/schema/To_Do_Item__c';
 import SUBJECT_FIELD from '@salesforce/schema/To_do_Item__c.Subject__c';
 import STATUS_FIELD from '@salesforce/schema/To_do_Item__c.Status__c';
 import PRIORITY_FIELD from '@salesforce/schema/To_do_Item__c.Priority__c';
 import DUE_DATE_FIELD from '@salesforce/schema/To_do_Item__c.Due_Date__c';
 import ID_FIELD from '@salesforce/schema/To_do_Item__C.Id';
+
+
 
 export default class ToDoItemCard extends LightningElement {
 
@@ -19,62 +26,127 @@ export default class ToDoItemCard extends LightningElement {
   statusField = STATUS_FIELD;
   subjectField = SUBJECT_FIELD;
 
-    @api
-    toDoItem;
 
-    dragStart;
+  // Used to store and show the To Do field values in the Edit Modal
+  editFieldSubjectValue;
+  editFieldStatusValue;
+  editFieldDateValue;
+  editFieldPriorityValue;
 
-    showEditModal = false;
 
-    itemDragStart(event) {
-      console.log(' itemDragStart this.toDoItem.Id = ' + this.toDoItem.Id);
-    
-      this.dispatchEvent(new CustomEvent('startdrag', {detail: this.toDoItem.Id}));
-      console.log('this.dispatchEvent = ' + JSON.stringify(this.dispatchEvent));
-      // this.dispatchEvent(CustomEvent('startdrag', {detail: 'asdf'}));
-      
-      // console.log('itemDragStart event = ' + JSON.stringify(event));
-      // event.dataTransfer.setData("text/plain", 'You did it');
-
-      // this.dragStart = event.target.title;
-      // console.log('event.target.title = ' + event.target.title);
-
+  subjectChange(event) {
+    this.editFieldSubjectValue = event.detail.value;
   }
 
-    renderedCallback() {
-        this.addEventListener('dragstart', this.itemDragStart);
-    }
+
+  statusChange(event) {
+    this.editFieldStatusValue = event.detail.value;
+  }
+
+  dateChange(event) {
+    this.editFieldDateValue = event.detail.value;
+  }
+
+  priorityChange(event) {
+    this.editFieldPriorityValue = event.detail.value;
+  }
+
+
+  // Stores the value and options that are used in the Radio Buttons for the filtering Status
+  statusValue = 'All';
+  get statusOptions() {
+      return [
+          { label: 'All', value: 'All' },
+          { label: 'Not Started', value: 'Not Started' },
+          { label: 'In Progress', value: 'In Progress' },
+          { label: 'Completed', value: 'Completed' }
+      ];
+  }
+
+
+  // Stores the value and options that are used in the Radio Buttons for the filtering Status
+  priorityValue = 'All';
+  get priorityOptions() {
+      return [
+          { label: 'All', value: 'All' },
+          { label: 'Low', value: 'Low' },
+          { label: 'Normal', value: 'Normal'},
+          { label: 'High', value: 'High' }
+      ];
+  }
 
 
 
-    handleToDoUpdate() {
-      console.log('Success');
-      this.showEditModal = false;
+@api
+toDoItem;
 
-      // sends custom event that will refresh the 
+dragStart;
+
+showEditModal = false;
+
+itemDragStart(event) {
+console.log(' itemDragStart this.toDoItem.Id = ' + this.toDoItem.Id);
+
+this.dispatchEvent(new CustomEvent('startdrag', {detail: this.toDoItem.Id}));
+console.log('this.dispatchEvent = ' + JSON.stringify(this.dispatchEvent));
+
+}
+
+renderedCallback() {
+  this.addEventListener('dragstart', this.itemDragStart);
+}
+
+handleToDoUpdate() {
+console.log('Success');
+this.showEditModal = false;
+
+// sends custom event that will refresh the 
+this.dispatchEvent(new CustomEvent('updateordeletecompleted',  {detail: true}));
+}
+
+handleEdit(){
+getToDoItemRecord({idArg: this.toDoItem.Id})
+  .then(result=>{
+
+    this.editFieldSubjectValue = result.Subject__c;
+    this.editFieldStatusValue = result.Status__c;
+    this.editFieldPriorityValue = result.Priority__c;
+    this.editFieldDateValue = result.Due_Date__c;
+
+
+    // toggles the switch to show the modal in the UI
+    this.showEditModal = true;
+  })
+}
+
+handleDelete(event) {
+
+// Calls apex to delete item
+deleteToDoItem({ id: this.toDoItem.Id })
+  .then((result)=>{
+    console.log('Made it to delete call')
+    
+    // Send custom message to parent component to refresh the wire
+  this.dispatchEvent(new CustomEvent('updateordeletecompleted',  {detail: true}));
+
+  })
+}
+
+submitEditedToDoRecord() {
+  updateEditedToDoItem({toDoItemId: this.toDoItem.Id, subjectArg: this.editFieldSubjectValue, dateArg: this.editFieldDateValue, priorityArg: this.editFieldPriorityValue, statusArg: this.editFieldStatusValue})
+    .then(result=>{
       this.dispatchEvent(new CustomEvent('updateordeletecompleted',  {detail: true}));
-    }
-
-    handleEdit(){
-      this.showEditModal = true;
-    }
-
-    handleDelete(event) {
-
-      // Calls apex to delete item
-      deleteToDoItem({ id: this.toDoItem.Id })
-        .then((result)=>{
-          console.log('Made it to delete call')
-          
-          // Send custom message to parent component to refresh the wire
-        this.dispatchEvent(new CustomEvent('updateordeletecompleted',  {detail: true}));
-
-        })
-
+      console.log('Made it pased Update Call')
       
-      
-        
-    }
+      // toggles modal off
+      this.showEditModal = false;
+    })
+  
+}
+
+handleReset() {
+  this.showEditModal = false;
+}
 
     testData = [{
         Subject__c: "ToDo Title",

@@ -41,12 +41,51 @@
                     </div>
                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="overflow: visible; overflow-y: visible;">
                         <!-- Start of form body -->
-                        <lightning-record-edit-form object-api-name={toDoObject} onsuccess={handleToDoUpdate}  record-id={toDoItem.Id} >
+                        <div class="slds-grid">
+                            <div class="slds-size_1-of-2">
+                                <lightning-input class="slds-p-around_medium" value={editFieldSubjectValue} placeholder={editFieldSubjectValue} type="text" name="Subject" label="Subject" onchange={subjectChange}></lightning-input>
+                
+                                <lightning-combobox
+                                    name="Status"
+                                    label="Status"
+                                    value={editFieldStatusValue}
+                                    options={statusOptions}
+                                    onchange={statusChange} 
+                                    class="slds-p-around_medium"></lightning-combobox>
+                                
+                            </div>
+                
+                            <div class="slds-size_1-of-2">
+                                
+                                <lightning-input class="slds-p-around_medium" value={editFieldDateValue} type="date" name="Date" label="Date" onchange={dateChange}></lightning-input>
+                
+                                <lightning-combobox
+                                    name="Priority"
+                                    label="Priority"
+                                    value={editFieldPriorityValue}
+                                    options={priorityOptions}
+                                    onchange={priorityChange}
+                                    class="slds-p-around_medium" ></lightning-combobox>
+                
+                            </div>
+                        </div>
+    
+                        <!-- Footer Buttons -->
+                        <div class="slds-p-right_large slds-text-align_right">
+                            <lightning-button class="slds-m-top_small slds-p-right_medium" variant="brand" onclick={submitEditedToDoRecord} label="Save-123">
+                            </lightning-button>
+                        
+        
+                            <lightning-button class="slds-m-top_small" label="Cancel" onclick={handleReset}>
+                            </lightning-button>
+                        </div>
+
+                        <!-- <lightning-record-edit-form object-api-name={toDoObject} onsuccess={handleToDoUpdate}  record-id={toDoItem.Id} >
                             <lightning-messages></lightning-messages>
                             
                             <div class="slds-grid">
                                 <div class="slds-col slds-size_1-of-2  slds-p-around_large" >
-                                  <!-- ASDFASDF -->
+
                                     <lightning-input-field field-name={subjectField} > </lightning-input-field>
                                     <lightning-input-field field-name={statusField} > </lightning-input-field>
                                 </div>
@@ -69,7 +108,7 @@
                                 </lightning-button>
                             </div>
                             
-                        </lightning-record-edit-form>
+                        </lightning-record-edit-form> -->
                         
                     </div>
                 </div>

@@ -1,6 +1,7 @@
 import { LightningElement, api, track, wire } from 'lwc';
 import getToDoItems from '@salesforce/apex/ToDoItemController.getToDoItems';
 import updateDroppedToDoItem from '@salesforce/apex/ToDoItemController.updateDroppedToDoItem';
+import createNewToDoItem from '@salesforce/apex/ToDoItemController.createNewToDoItem';
 import { updateRecord } from 'lightning/uiRecordApi';
 
 import TO_DO_OBJ from '@salesforce/schema/To_Do_Item__c';
@@ -23,11 +24,17 @@ export default class ToDoApp extends LightningElement {
     statusField = STATUS_FIELD;
     subjectField = SUBJECT_FIELD;
 
+    subjectInput;
+    dueDateInput;
+    statusInput;
+    priorityInput;
+
     // initializes boolean that controlls 
     showNewRecordScreen = false;
 
     // Fires on "Save" when creating a new To Do
     // Refreshes the list of ToDoItems on screen and closes the New To Do window
+    // ** this can likely be depreicated **
     handleToDoCreated(event){
         refreshApex(this.wireDataHolderToRefresh);
         this.showNewRecordScreen = false;
@@ -35,6 +42,7 @@ export default class ToDoApp extends LightningElement {
     
     // Fires on cancel button being pressed. 
     // Collects all input fields and resets them
+    // ** needs updating for new form **
     handleReset(event) {
         const inputFields = this.template.querySelectorAll(
             'lightning-input-field'
@@ -49,14 +57,48 @@ export default class ToDoApp extends LightningElement {
 
      }
 
-    // Opens the new To Do window
-    handleNewToDoClick() {
-        this.showNewRecordScreen = true;
-    }
+
+    // ********** Create new record functions ****************
+    // *******************************************************
+        statusChange(event) {
+            this.statusInput = event.detail.value;
+        }
+    
+        subjectChange (event) {
+            this.subjectInput = event.detail.value;
+        }
+    
+        priorityChange(event) {
+            this.priorityInput = event.detail.value;
+        }
+    
+        dateChange(event) {
+            this.dueDateInput = event.detail.value;
+        } 
+
+        submitNewToDoRecord() {
+            createNewToDoItem({subjectArg: this.subjectInput, dateArg: this.dueDateInput, statusArg: this.statusInput, priorityArg: this.priorityInput})
+                .then(() => {
+                    refreshApex(this.wireDataHolderToRefresh);
+                    this.showNewRecordScreen = false;
+                })
+                .catch(error=>{
+                    console.log('Update Record Imperatively Error  = ' + JSON.stringify(error));
+                    refreshApex(this.wireDataHolderToRefresh);
+                    // create toast with Error here. 
+                })
+        }
+
+        // Opens the new To Do window
+        handleNewToDoClick() {
+            this.showNewRecordScreen = true;
+        }
+    // ***********************************************************
 
     handleRefresh() {
-        console.log('Delete Log. ' + JSON.stringify(this.wireDataHolderToRefresh));
         refreshApex(this.wireDataHolderToRefresh);
+        console.log('HandleRefresh() wiare call ' + JSON.stringify(this.wireDataHolderToRefresh));
+
         
     }
 
@@ -194,21 +236,30 @@ export default class ToDoApp extends LightningElement {
 
     updateToDoFieldsOnDrop(status, toDoId) {
 
-        const fields={};
-        fields[ID_FIELD.fieldApiName] = toDoId;
-        fields[STATUS_FIELD.fieldApiName] = status;
-        console.log(JSON.stringify('fields = ' +  JSON.stringify(fields)));
+        updateDroppedToDoItem({toDoItemId: toDoId, newStatus: status})
+        .then(() => {
+                    refreshApex(this.wireDataHolderToRefresh);
+                })
+                .catch(error=>{
+                    console.log('Update Record Imperatively Error  = ' + JSON.stringify(error));
+                    refreshApex(this.wireDataHolderToRefresh);
+                })
+
+        // const fields={};
+        // fields[ID_FIELD.fieldApiName] = toDoId;
+        // fields[STATUS_FIELD.fieldApiName] = status;
+        // console.log(JSON.stringify('fields = ' +  JSON.stringify(fields)));
         
-        const recordInput = {fields}
-        console.log(JSON.stringify('recordInput = ' + JSON.stringify(recordInput)));
-        updateRecord(recordInput)   
-            .then(() => {
-                refreshApex(this.wireDataHolderToRefresh);
-            })
-            .catch(error=>{
-                console.log('Made it to RECORD ERROR = ' + error.message + ' CODE = ' + error.errorCode + ' error Obj = ' + JSON.stringify(error));
-                refreshApex(this.wireDataHolderToRefresh);
-            })
+        // const recordInput = {fields}
+        // console.log(JSON.stringify('recordInput = ' + JSON.stringify(recordInput)));
+        // updateRecord(recordInput)   
+        //     .then(() => {
+        //         refreshApex(this.wireDataHolderToRefresh);
+        //     })
+        //     .catch(error=>{
+        //         console.log('Made it to RECORD ERROR = ' + error.message + ' CODE = ' + error.errorCode + ' error Obj = ' + JSON.stringify(error));
+        //         refreshApex(this.wireDataHolderToRefresh);
+        //     })
     }
 
 

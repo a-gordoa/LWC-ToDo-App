@@ -5,13 +5,6 @@
             <button class="slds-button slds-button_neutral " onclick={handleNewToDoClick}>New To Do</button>
         </div>
 
-        <!-- <lightning-record-form
-            object-api-name={toDoObject}
-            fields={toDoCreateRecordFields}
-            onsuccess={handleToDoRecordCreated}
-        >
-        </lightning-record-form> -->
-
         <div class="slds-grid">
             
             <lightning-combobox
@@ -49,36 +42,50 @@
                     <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Create a new To Do Item</h1>
                 </div>
                 <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="overflow: visible; overflow-y: visible;">
-                    <!-- Start of form body -->
-                    <lightning-record-edit-form object-api-name={toDoObject} onsuccess={handleToDoCreated}>
-                        <lightning-messages></lightning-messages>
-                        
-                        <div class="slds-grid">
-                            <div class="slds-col slds-size_1-of-2  slds-p-around_large" >
-                                <lightning-input-field field-name={subjectField} > </lightning-input-field>
-                                <lightning-input-field field-name={statusField} > </lightning-input-field>
-                            </div>
-    
-                            <div class="slds-col slds-size_1-of-2 slds-p-around_large" >
-                                <lightning-input-field field-name={priorityField} > </lightning-input-field>
-                                <lightning-input-field field-name={dueDateField} > </lightning-input-field>
-                            </div>
-                        </div>
-                        
-    
-                        <div class="slds-p-right_large slds-text-align_right">
-
+                   
+                    <!-- Start of Form -->
+                    <div class="slds-grid">
+                        <div class="slds-size_1-of-2">
+                            <lightning-input class="slds-p-around_medium" type="text" name="Subject" label="Subject" onchange={subjectChange}></lightning-input>
+            
+                            <lightning-combobox
+                                name="Status"
+                                label="Status"
+                                value={createToDoItemStatus}
+                                options={statusOptions}
+                                onchange={statusChange} 
+                                class="slds-p-around_medium"
+                                required
+                                ></lightning-combobox>
                             
-                            <lightning-button class="slds-m-top_small slds-p-right_medium" variant="brand" type="submit" label="Save-123">
-                            </lightning-button>
-                        
-    
-                            <lightning-button class="slds-m-top_small" label="Cancel" onclick={handleReset}>
-                            </lightning-button>
                         </div>
-                        
-                    </lightning-record-edit-form>
+            
+                        <div class="slds-size_1-of-2">
+                            
+                            <lightning-input class="slds-p-around_medium" type="date" name="Date" label="Date" onchange={dateChange}></lightning-input>
+            
+                            <lightning-combobox
+                                name="Priority"
+                                label="Priority"
+                                value={createToDoItemPriority}
+                                options={priorityOptions}
+                                onchange={priorityChange}
+                                class="slds-p-around_medium" 
+                                required
+                                ></lightning-combobox>
+            
+                        </div>
+                    </div>
+
+                    <!-- Footer Buttons -->
+                    <div class="slds-p-right_large slds-text-align_right">
+                        <lightning-button class="slds-m-top_small slds-p-right_medium" variant="brand" onclick={submitNewToDoRecord} type="submit" label="Save-123">
+                        </lightning-button>
                     
+    
+                        <lightning-button class="slds-m-top_small" label="Cancel" onclick={handleReset}>
+                        </lightning-button>
+                    </div>
                 </div>
             </div>
         </section>
